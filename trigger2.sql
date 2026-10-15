@@ -56,3 +56,31 @@ create trigger tgr_atualiza_total_pedidos --nome do trigger
 after insert or update or delete on pedidos -- depois inseira ou atualize ou delete pedidos
 for each row --para cada linha 
 execute function fn_atualiza_total_cliente(); --execute a função
+
+insert into clientes (nome) values ('lucas pavanato'), ('cleiton souza'); --insere os dados na tabela clientes
+
+select * from  clientes --mostra a tabela clientes
+ 
+insert into pedidos (cliente_id, valor_total)  --insere o id do cliente 1 e o valor do pedido
+values
+(1, 150.00);
+
+insert into pedidos (cliente_id, valor_total)  --insere o id do cliente 1 e o valor do pedido + o valor antigo
+values
+(1, 50.00);
+
+insert into pedidos (cliente_id, valor_total)  --insere o id do cliente 2 e o valor do pedido
+values
+(2, 300.00);
+
+select * from clientes --mostra a tabela clinetes (agora com os dados)
+
+update pedidos set valor_total = 100.00 where id = 2 --atualiza o valor de compra do pavanato para 250
+
+select * from clientes where id =1
+
+delete from pedidos where id=1
+
+SELECT * FROM clientes WHERE id = 1;
+
+
