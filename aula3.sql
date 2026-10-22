@@ -29,16 +29,18 @@ CREATE OR REPLACE FUNCTION fn_controle_estoque()
 RETURNS TRIGGER AS $$
 BEGIN
     -- Se for INSERÇÃO (Nova venda do produto)
-    IF (TG_OP = 'INSERT') THEN
-        UPDATE produtos 
-        SET quantidade_estoque = quantidade_estoque - NEW.quantidade 
-        WHERE id = NEW.produto_id;
+    IF (TG_OP = 'INSERT') THEN --se a tg_op for insert
+        UPDATE produtos --atualiza a tabela produtos
+        SET quantidade_estoque = quantidade_estoque - NEW.quantidade  -- seta a quantidade estoque - oq foi alterado pelo usuario
+        WHERE id = NEW.produto_id; --onde o id for = novo produto_id
         
+
     -- Se for EXCLUSÃO (Produto removido da venda ou venda cancelada)
-    ELSIF (TG_OP = 'DELETE') THEN
+    ELSIF (TG_OP = 'DELETE') THEN -- senao tg_op = delete
         UPDATE produtos 
         SET quantidade_estoque = quantidade_estoque + OLD.quantidade 
         WHERE id = OLD.produto_id;
+     
         
     -- Se for ATUALIZAÇÃO (Alterou a quantidade do produto já vendido)
     ELSIF (TG_OP = 'UPDATE') THEN
