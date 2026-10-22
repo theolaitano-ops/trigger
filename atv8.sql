@@ -1,0 +1,37 @@
+CREATE TABLE projetos (
+    id SERIAL PRIMARY KEY,
+    nome_projeto VARCHAR(100) NOT NULL,
+    status VARCHAR(20) DEFAULT 'EM ANDAMENTO'
+);
+
+
+CREATE TABLE tarefas (
+    id SERIAL PRIMARY KEY,
+    projeto_id INT REFERENCES projetos(id) ON DELETE CASCADE,
+    descricao VARCHAR(200) NOT NULL,
+    status VARCHAR(20) DEFAULT 'PENDENTE'
+);
+
+
+CREATE OR REPLACE FUNCTION fn_propaga_cancelamento_projeto()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Se o projeto mudou para 'CANCELADO'
+    IF NEW.status = 'CANCELADO' AND OLD.status IS DISTINCT FROM 'CANCELADO' THEN
+        
+       
+        UPDATE tarefas
+        SET status = 'CANCELADA'
+        WHERE projeto_id = NEW.id AND status = 'PENDENTE';
+        
+    END IF;
+    
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER trg_cancela_tarefas_projeto
+AFTER UPDATE ON projetos
+FOR EACH ROW
+EXECUTE FUNCTION fn_propaga_cancelamento_projeto();
